@@ -1,0 +1,83 @@
+<template>
+  <div class="input-validation-container">
+    <div class="input"><input placeholder="{{placeholder}}"/><span >*</span></div>
+    <div class="error" v-if="isShowError">{{emsg}}</div>
+    <div class="warning" v-if="isShowWarn">{{wmsg}}</div>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: 'hello',
+    data () {
+      return {
+        isShowError:false,
+        isShowWarn:false,
+        emsg:"",
+        wmsg:"",
+        placeholder:"请输入..."
+      }
+
+    },
+    created(){
+
+    },
+    methods: {
+      login:function () {
+        var name = this.username;
+        var passwd = this.password;
+
+        this.axios({
+          method:'POST',
+          url:this.siteUrl+"login",
+          data:{
+            username:name,
+            password:passwd
+          }
+        }).then((res) =>{
+          var data = res.data;
+          if(data.status=="success"){
+            localStorage.Authentication_Token=res.token;
+            this.$router.push({path:'/'});
+          }else{
+
+            alert(data.errorMsg);
+          }
+        })
+          .catch((error)=>{
+            console.log(error)
+          })
+      }
+
+    },
+    computed:{
+      isShowWarn:function() {
+        if(this.wmsg){
+          return true;
+        }
+        return false;
+      },
+      isShowError:function () {
+        if(this.emsg){
+          return true;
+        }
+        return false;
+      }
+    }
+  }
+</script>
+<style scoped>
+  @import "../assets/css/login.css"
+</style>
+<style scoped="" lang="less">
+  .input-validation-container{
+    display: flex;
+    flex-wrap: wrap;
+    div{
+      width: auto;
+    }
+    input{
+      border: none;
+    }
+  }
+</style>
